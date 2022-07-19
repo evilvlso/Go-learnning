@@ -4,6 +4,10 @@ import (
 	example "example.com/gin/pb"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
+	"os"
+	"os/signal"
+	"syscall"
+
 	// "github.com/gogo/protobuf/proto"
 	"google.golang.org/protobuf/proto"
 	"log"
@@ -59,5 +63,11 @@ func main() {
 		c.String(http.StatusOK,`<h1>Hello world!</h1>`)
 	})
 	router.POST("/signup",SignUpHandler)
-	router.Run()
+	go func() {
+		router.Run()
+	}()
+	quit:=make(chan os.Signal)
+	signal.Notify(quit,syscall.SIGINT,syscall.SIGINT)
+	<-quit
+	log.Println("[ENDING] The Service Over!")
 }
