@@ -44,8 +44,11 @@ func ReturnProto(c *gin.Context) {
 	c.ProtoBuf(http.StatusOK,et)
 }
 func main() {
-
+	gin.SetMode(gin.DebugMode)
+	//gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	//router:=gin.New()
+	router.RouterGroup.Handlers=append(router.RouterGroup.Handlers,CostLogger,CheckToken)
 	ProductList := router.Group("/product")
 	ProductList.GET("/:id/:action", GetProduct)
 

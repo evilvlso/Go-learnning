@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 type SignUp struct {
@@ -25,4 +26,22 @@ func SignUpHandler(c *gin.Context)  {
 		return
 	}
 	c.JSON(http.StatusOK,signup)
+}
+
+func CostLogger(c *gin.Context)  {
+	start:=time.Now()
+	c.Next()
+	log.Printf("the request spend time %d ms",time.Since(start).Milliseconds())
+}
+
+func CheckToken(c *gin.Context)  {
+	token:=c.GetHeader("X-Auth-Token")
+	if token!="this is secret"{
+		c.JSON(http.StatusOK,gin.H{
+			"msg":"Auth failed!",
+		})
+		c.Abort()
+	}
+	c.Next()
+	{}
 }
