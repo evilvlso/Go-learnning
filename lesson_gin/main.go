@@ -48,7 +48,13 @@ func main() {
 	router := gin.Default()
 	ProductList := router.Group("/product")
 	ProductList.GET("/:id/:action", GetProduct)
+
 	router.GET("/:sid/json",ReturnJson)
 	router.GET("/:sid/proto",ReturnProto)
+	router.GET("/purejson", func(c *gin.Context) {
+		c.Header("Content-Type","text/html;charset=utf-8")
+		c.String(http.StatusOK,`<h1>Hello world!</h1>`)
+	})
+	router.POST("/signup",SignUpHandler)
 	router.Run()
 }
