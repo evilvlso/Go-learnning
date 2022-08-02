@@ -8,13 +8,17 @@ import (
 )
 
 type SignUp struct {
-	User string `form:"user" json:"user" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-	RePassword string `form:"repassword" json:"re_password" binding:"required,eqfield=Password"`
-	Email string `form:"email" json:"email" binding:"email"`
-	Phone string `form:"phone" json:"phone" binding:"required,min=11,max=11"`
+//	User string `form:"user" json:"user" binding:"required"`
+//	Password string `form:"password" json:"password" binding:"required"`
+//	RePassword string `form:"repassword" json:"re_password" binding:"required,eqfield=Password"`
+//	Email string `form:"email" json:"email" binding:"email"`
+//	Phone string `form:"phone" json:"phone" binding:"required,min=11,max=11"`
+//}
+	NickName string `form:"nick_name" json:"nickname" binding:"required,min=4,max=16"`
+	Passwd   string	`json:"passwd" form:"passwd" binding:"required,alphanum"`
+	RePasswd string `json:"repasswd" form:"repasswd" binding:"required,eqfield=Passwd,alphanum"`
+	Email	string `json:"email" form:"email" binding:"required,email"`
 }
-
 func SignUpHandler(c *gin.Context)  {
 	var signup SignUp
 	log.Println(c.Request.Header)

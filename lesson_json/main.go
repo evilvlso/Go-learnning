@@ -31,4 +31,9 @@ func main() {
 		panic(err.Error())
 	}
 	fmt.Printf("un serialize result:%T---%v\n",p1,p1)
+
+	strM:=map[int]string{1:"a",2:"b",3:"c"}
+	strM[4]="d"
+	delete(strM,0)
+	fmt.Print("%v",strM)
 }
