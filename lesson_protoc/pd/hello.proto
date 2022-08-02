@@ -1,0 +1,14 @@
+syntax="proto3";
+option go_package="./;pd";
+package pb;
+
+service Calculate{
+rpc Sum (stream SumRequest) returns (SumResponse){}
+}
+message SumRequest{
+int64 num=1;
+}
+
+message SumResponse{
+    int64 result=1;
+}
