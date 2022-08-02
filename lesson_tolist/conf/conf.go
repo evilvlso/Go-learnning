@@ -37,7 +37,7 @@ func NewStore() cookie.Store {
 		redisSection.Key("Passwd").String(),
 		[]byte(redisSection.Key("Secret").String()))
 	if err != nil {
-		record.Logger.Panicf("Redis Store Init error:%s",err.Error())
+		record.Logger.Print("Redis Store Init error:%s",err.Error())
 		store=cookie.NewStore([]byte("vdail"))
 	}
 	return store

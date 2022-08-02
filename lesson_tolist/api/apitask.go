@@ -45,16 +45,45 @@ func CreateTask(c *gin.Context)  {
 	c.JSON(200,res)
 }
 func ShowTask(c *gin.Context)  {
-	//uid,_:=c.Get("uid")
-	//tid:=c.Param("tid")
+	uid,_:=c.Get("uid")
+	var showTaskservice services.ShowTaskService
+	if err:=c.ShouldBindUri(&showTaskservice); err != nil {
+		c.JSON(200,e.ErrorReponse{
+			Status:e.InvalidParams,
+			Msg:e.GetMsg(e.InvalidParams),
+			Error: err.Error(),
+		})
+		return
+	}
+	res:=showTaskservice.ShowTask(cast.ToUint(uid))
+	c.JSON(200,res)
 }
 func DeleteTask(c *gin.Context)  {
-	//uid,_:=c.Get("uid")
-	//tid:=c.Param("tid")
+	uid,_:=c.Get("uid")
+	var deleteTaskservice services.DeleteTaskService
+	if err:=c.ShouldBindUri(&deleteTaskservice); err != nil {
+		c.JSON(200,e.ErrorReponse{
+			Status:e.InvalidParams,
+			Msg:e.GetMsg(e.InvalidParams),
+			Error: err.Error(),
+		})
+		return
+	}
+	res:=deleteTaskservice.DeleteTask(cast.ToUint(uid))
+	c.JSON(200,res)
 
 }
 func UpdateTask(c *gin.Context)  {
-	//uid,_:=c.Get("uid")
-	//tid:=c.Param("tid")
-
+	tid:=c.Param("tid")
+	var updateTaskService services.UpdateTaskService
+	if err:=c.ShouldBind(&updateTaskService); err != nil {
+		c.JSON(200,e.ErrorReponse{
+			Status: e.InvalidParams,
+			Msg: e.GetMsg(e.InvalidParams),
+			Error: err.Error(),
+		})
+		return
+	}
+	res:=updateTaskService.UpdateTask(tid)
+	c.JSON(200,res)
 }

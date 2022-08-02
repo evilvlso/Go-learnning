@@ -14,7 +14,7 @@ type ListTaskService struct {
 }
 
 func (l ListTaskService) ListTask(uid uint8) serialize.Response {
-	err:=model.Db.Select("id,title,comment,status").Where("uid=?",uid).Find(&l.Tasks).
+	err:=model.Db.Select("id,title,comment,status").Where("uid=?",uid).Order("created_at DESC").Find(&l.Tasks).
 		Limit(l.Limit).Offset(l.Offset).Error
 	if err != nil {
 		return serialize.Response{
@@ -54,14 +54,74 @@ func (s CreateTaskService) CreateTask(uid uint) serialize.Response {
 	return serialize.Response{
 		Status:e.SUCCESS,
 		Msg:e.GetMsg(e.SUCCESS),
+		//应该return tid
+		Data:serialize.DataList{},
 	}
 }
 
 type ShowTaskService struct {
+	Tid uint `json:"tid" form:"tid" uri:"tid" binding:"required"`
+}
+
+func (s ShowTaskService) ShowTask(uid uint) serialize.Response {
+	var task model.Task
+	if err:=model.Db.Select([]string{"title","comment","status"}).Where("uid=? and id=?",uid,s.Tid).First(&task).Error;err!=nil{
+		return serialize.Response{
+			Status: e.ErrorDatabase,
+			Msg: e.GetMsg(e.ErrorDatabase),
+			Error: err.Error(),
+		}
+	}
+	return serialize.Response{
+		Status: e.SUCCESS,
+		Msg: e.GetMsg(e.SUCCESS),
+		Data: serialize.SerializeTask([]model.Task{task}),
+	}
 }
 
 type DeleteTaskService struct {
+	Tid uint `json:"tid" form:"tid"  uri:"tid" binding:"required"`
+}
+
+func (s DeleteTaskService) DeleteTask(uid uint) serialize.Response {
+	var task model.Task
+	if err:=model.Db.Delete(&task,"uid=? and id=?",uid,s.Tid).Error;err!=nil{
+		return serialize.Response{
+			Status: e.ErrorDatabase,
+			Msg: e.GetMsg(e.ErrorDatabase),
+			Error: err.Error(),
+		}
+	}
+	return serialize.Response{
+		Status: e.SUCCESS,
+		Msg: e.GetMsg(e.SUCCESS),
+		Data: "删除成功",
+	}
 }
 
 type UpdateTaskService struct {
+	Title string `json:"title" form:"title" binding:"required"`
+	Comment string `json:"comment" form:"comment" binding:"required"`
+	Status uint8 `json:"status" form:"status" binding:"required"`
+	Tid   uint `json:"tid" form:"tid"  uri:"tid"`
+}
+
+func (u UpdateTaskService) UpdateTask(tid string) serialize.Response {
+	var task model.Task
+	if err:=model.Db.Where("id=?",tid).First(&task).Error; err != nil {
+		return serialize.Response{
+					Status: e.ErrorDatabase,
+					Msg: e.GetMsg(e.ErrorDatabase),
+					Error: err.Error(),
+				}
+	}
+	task.Title=u.Title
+	task.Comment=u.Comment
+	task.Status=u.Status
+	model.Db.Save(&task)
+	return serialize.Response{
+		Status: e.SUCCESS,
+		Msg: e.GetMsg(e.SUCCESS),
+		Data: "更新成功",
+	}
 }
