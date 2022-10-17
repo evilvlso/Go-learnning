@@ -111,7 +111,7 @@ func getItems(keyword string) {
 						ch<-&infos
 					}
 				}
-				wg.Done()
+				defer wg.Done()
 			}(start)
 	}
 	wg.Wait()
